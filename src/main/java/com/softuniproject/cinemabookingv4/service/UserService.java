@@ -4,6 +4,7 @@ import com.softuniproject.cinemabookingv4.entity.User;
 import com.softuniproject.cinemabookingv4.entity.UserRole;
 import com.softuniproject.cinemabookingv4.exception.DomainException;
 import com.softuniproject.cinemabookingv4.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -87,4 +88,21 @@ public class UserService {
     }
 
 
+    @PostConstruct
+    public void initAdminUser() {
+        if (userRepository.findByEmail("admin@kinomania.com").isEmpty()) {
+            User admin = User.builder()
+                    .email("admin@kinomania.com")
+                    .password("123123")
+                    .role(UserRole.ADMIN)
+                    .balance(99999999.0)
+                    .build();
+            userRepository.save(admin);
+            log.info("========================================");
+            log.info("ADMIN ACCOUNT CREATED!");
+            log.info("Email: admin@kinomania.com");
+            log.info("Password: 123123");
+            log.info("ID: [{}]", admin.getId());
+            log.info("========================================");        }
+    }
 }
