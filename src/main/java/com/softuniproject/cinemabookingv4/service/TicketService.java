@@ -8,9 +8,6 @@ import com.softuniproject.cinemabookingv4.repository.ScreeningRepository;
 import com.softuniproject.cinemabookingv4.repository.TicketRepository;
 import com.softuniproject.cinemabookingv4.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -25,16 +22,12 @@ public class TicketService {
     private final UserRepository userRepository;
     private final ScreeningRepository screeningRepository;
 
-    @Autowired
-    public TicketService(TicketRepository ticketRepository,
-                         UserRepository userRepository,
-                         ScreeningRepository screeningRepository) {
+    public TicketService(TicketRepository ticketRepository, UserRepository userRepository, ScreeningRepository screeningRepository) {
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
         this.screeningRepository = screeningRepository;
     }
 
-    @CacheEvict(value = "tickets", allEntries = true)
     @Transactional
     public Ticket buyTicket(UUID userId, UUID screeningId) {
         User user = userRepository.findById(userId)
@@ -57,24 +50,13 @@ public class TicketService {
                 .purchaseTime(LocalDateTime.now())
                 .build();
 
-        Ticket savedTicket = ticketRepository.save(ticket);
-
-        log.info("User [%s] bought a ticket for screening [%s] on [%s]."
-                .formatted(user.getEmail(), screening.getMovie().getTitle(), screening.getStartTime()));
-
-        return savedTicket;
+        return ticketRepository.save(ticket);
     }
 
-    @Cacheable("tickets")
     public List<Ticket> getUserTickets(UUID userId) {
         if (!userRepository.existsById(userId)) {
             throw new DomainException("User with ID [%s] does not exist.".formatted(userId));
         }
         return ticketRepository.findByUserId(userId);
-    }
-
-    public Ticket getById(UUID ticketId) {
-        return ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new DomainException("Ticket with ID [%s] does not exist.".formatted(ticketId)));
     }
 }

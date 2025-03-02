@@ -54,12 +54,12 @@ public class ScreeningService {
 
     @CacheEvict(value = "screenings", allEntries = true)
     @Transactional
-    public Screening addScreening(UUID movieId, UUID cinemaId, LocalDateTime startTime, double price) {
+    public Screening addScreening(UUID movieId, String cinemaName, LocalDateTime startTime, Double price) {
         Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new DomainException("Movie with ID [%s] does not exist.".formatted(movieId)));
+                .orElseThrow(() -> new DomainException("Movie with ID [%s] not found.".formatted(movieId)));
 
-        Cinema cinema = cinemaRepository.findById(cinemaId)
-                .orElseThrow(() -> new DomainException("Cinema with ID [%s] does not exist.".formatted(cinemaId)));
+        Cinema cinema = cinemaRepository.findByName(cinemaName)
+                .orElseThrow(() -> new DomainException("Cinema with name [%s] not found.".formatted(cinemaName)));
 
         Screening screening = Screening.builder()
                 .movie(movie)
