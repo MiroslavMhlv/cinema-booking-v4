@@ -1,5 +1,6 @@
 package com.softuniproject.cinemabookingv4.repository;
 
+import com.softuniproject.cinemabookingv4.entity.Screening;
 import com.softuniproject.cinemabookingv4.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     List<Ticket> findByUserId(UUID userId);
+    boolean existsByScreeningAndSeatNumber(Screening screening, int seatNumber);
+
 }

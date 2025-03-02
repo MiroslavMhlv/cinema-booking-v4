@@ -47,6 +47,7 @@ public class DtoMapper {
                 .id(ticket.getId())
                 .movieTitle(ticket.getScreening().getMovie().getTitle())
                 .cinemaName(ticket.getScreening().getCinema().getName())
+                .seatNumber(ticket.getSeatNumber())
                 .purchaseTime(ticket.getPurchaseTime())
                 .price(ticket.getScreening().getPrice())
                 .build();

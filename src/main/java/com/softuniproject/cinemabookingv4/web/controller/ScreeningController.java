@@ -1,4 +1,4 @@
-package com.softuniproject.cinemabookingv4.controller;
+package com.softuniproject.cinemabookingv4.web.controller;
 
 import com.softuniproject.cinemabookingv4.web.dto.ScreeningRequest;
 import com.softuniproject.cinemabookingv4.web.dto.ScreeningResponse;
@@ -29,9 +29,6 @@ public class ScreeningController {
         this.userService = userService;
     }
 
-    /**
-     * Returns all screenings
-     */
     @GetMapping
     public ResponseEntity<List<ScreeningResponse>> getAllScreenings() {
         List<ScreeningResponse> screenings = screeningService.getAllScreenings()
@@ -42,9 +39,6 @@ public class ScreeningController {
         return ResponseEntity.ok(screenings);
     }
 
-    /**
-     * Returns all screenings for a specific cinema
-     */
     @GetMapping("/cinema/{cinemaId}")
     public ResponseEntity<List<ScreeningResponse>> getScreeningsByCinema(@PathVariable UUID cinemaId) {
         List<ScreeningResponse> screenings = screeningService.getScreeningsByCinema(cinemaId)
@@ -55,9 +49,6 @@ public class ScreeningController {
         return ResponseEntity.ok(screenings);
     }
 
-    /**
-     * Adds a new screening (ADMIN only)
-     */
     @PostMapping
     public ResponseEntity<ScreeningResponse> addScreening(@RequestParam UUID userId,
                                                           @Valid @RequestBody ScreeningRequest request) {
@@ -71,9 +62,6 @@ public class ScreeningController {
         return ResponseEntity.ok(DtoMapper.fromScreening(screening));
     }
 
-    /**
-     * Deletes a screening (ADMIN only)
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteScreening(@RequestParam UUID userId, @PathVariable UUID id) {
         User user = userService.getById(userId);
@@ -85,4 +73,18 @@ public class ScreeningController {
         screeningService.deleteScreening(id);
         return ResponseEntity.ok("Screening deleted successfully.");
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ScreeningResponse>> getScreeningsForMovieInCinema(
+            @RequestParam String cinemaName,
+            @RequestParam String movieTitle) {
+
+        List<ScreeningResponse> screenings = screeningService.getScreeningsForMovieInCinema(cinemaName, movieTitle)
+                .stream()
+                .map(DtoMapper::fromScreening)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(screenings);
+    }
+
 }

@@ -86,4 +86,9 @@ public class ScreeningService {
         screeningRepository.deleteById(screeningId);
         log.info("Screening with ID [%s] was deleted.".formatted(screeningId));
     }
+
+    public List<Screening> getScreeningsForMovieInCinema(String cinemaName, String movieTitle) {
+        return screeningRepository.findByCinema_NameAndMovie_Title(cinemaName, movieTitle);
+    }
+
 }

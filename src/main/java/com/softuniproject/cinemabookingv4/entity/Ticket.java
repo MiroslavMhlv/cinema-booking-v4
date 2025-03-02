@@ -23,4 +23,7 @@ public class Ticket {
     private Screening screening;
 
     private LocalDateTime purchaseTime;
+
+    @Column(nullable = false)
+    private int seatNumber;
 }

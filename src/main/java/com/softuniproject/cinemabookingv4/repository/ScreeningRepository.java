@@ -7,4 +7,7 @@ import java.util.UUID;
 
 public interface ScreeningRepository extends JpaRepository<Screening, UUID> {
     List<Screening> findByCinemaId(UUID cinemaId);
+
+    List<Screening> findByCinema_NameAndMovie_Title(String cinemaName, String movieTitle);
+
 }

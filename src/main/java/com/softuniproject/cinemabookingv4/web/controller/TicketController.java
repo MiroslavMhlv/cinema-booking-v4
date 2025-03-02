@@ -26,18 +26,15 @@ public class TicketController {
         this.userService = userService;
     }
 
-    /**
-     * Allows a user to buy a ticket for a screening
-     */
     @PostMapping("/buy")
-    public ResponseEntity<TicketResponse> buyTicket(@RequestParam UUID userId, @RequestParam UUID screeningId) {
-        Ticket ticket = ticketService.buyTicket(userId, screeningId);
+    public ResponseEntity<TicketResponse> buyTicket(@RequestParam UUID userId,
+                                                    @RequestParam UUID screeningId,
+                                                    @RequestParam int seatNumber) {
+        Ticket ticket = ticketService.buyTicket(userId, screeningId, seatNumber);
         return ResponseEntity.ok(DtoMapper.fromTicket(ticket));
     }
 
-    /**
-     * Returns all tickets purchased by a user
-     */
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<TicketResponse>> getUserTickets(@PathVariable UUID userId) {
         List<TicketResponse> tickets = ticketService.getUserTickets(userId)

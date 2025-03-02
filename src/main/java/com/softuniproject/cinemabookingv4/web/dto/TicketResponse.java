@@ -13,4 +13,5 @@ public class TicketResponse {
     private String cinemaName;
     private LocalDateTime purchaseTime;
     private double price;
+    private int seatNumber;
 }

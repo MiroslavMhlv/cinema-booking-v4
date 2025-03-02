@@ -29,7 +29,7 @@ public class TicketService {
     }
 
     @Transactional
-    public Ticket buyTicket(UUID userId, UUID screeningId) {
+    public Ticket buyTicket(UUID userId, UUID screeningId, int seatNumber) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new DomainException("User with ID [%s] does not exist.".formatted(userId)));
 
@@ -41,6 +41,15 @@ public class TicketService {
                     .formatted(screening.getPrice(), user.getBalance()));
         }
 
+        if (seatNumber < 1 || seatNumber > 50) {
+            throw new DomainException("Invalid seat number! Seats are numbered from 1 to 50.");
+        }
+
+        boolean seatTaken = ticketRepository.existsByScreeningAndSeatNumber(screening, seatNumber);
+        if (seatTaken) {
+            throw new DomainException("Seat number %d is already taken!".formatted(seatNumber));
+        }
+
         user.setBalance(user.getBalance() - screening.getPrice());
         userRepository.save(user);
 
@@ -48,6 +57,7 @@ public class TicketService {
                 .userId(userId)
                 .screening(screening)
                 .purchaseTime(LocalDateTime.now())
+                .seatNumber(seatNumber)
                 .build();
 
         return ticketRepository.save(ticket);
