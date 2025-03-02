@@ -22,4 +22,7 @@ public class User {
     private String password;
 
     private Double balance = 100.0;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
 }
