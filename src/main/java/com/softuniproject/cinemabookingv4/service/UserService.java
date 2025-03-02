@@ -1,6 +1,7 @@
 package com.softuniproject.cinemabookingv4.service;
 
 import com.softuniproject.cinemabookingv4.entity.User;
+import com.softuniproject.cinemabookingv4.entity.UserRole;
 import com.softuniproject.cinemabookingv4.exception.DomainException;
 import com.softuniproject.cinemabookingv4.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,7 @@ public class UserService {
         return User.builder()
                 .email(email)
                 .password(password) // todo: password encoder
+                .role(UserRole.USER)
                 .balance(100.0)
                 .build();
     }
@@ -69,5 +71,20 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    @CacheEvict(value = "users", allEntries = true)
+    public void switchRole(UUID userId) {
+        User user = getById(userId);
+
+        if (user.getRole() == UserRole.USER) {
+            user.setRole(UserRole.ADMIN);
+        } else {
+            user.setRole(UserRole.USER);
+        }
+
+        userRepository.save(user);
+        log.info("User role switched: [%s] is now [%s]".formatted(user.getEmail(), user.getRole()));
+    }
+
 
 }
